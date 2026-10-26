@@ -1,0 +1,9 @@
+function root_dir = setup_hontf()
+% Add the bundled dependencies; no external toolbox startup is needed.
+root_dir = fileparts(mfilename('fullpath'));
+addpath(root_dir, fullfile(root_dir,'tools'), ...
+    fullfile(root_dir,'third_party','gspbox'), ...
+    fullfile(root_dir,'third_party','tensor_toolbox'));
+assert(exist('knnsearch','file') == 2 && exist('randsample','file') == 2, ...
+    'Statistics and Machine Learning Toolbox is required.');
+end

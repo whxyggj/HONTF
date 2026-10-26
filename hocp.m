@@ -1,10 +1,10 @@
 function [A, B, C, nIter, obj_all] = hocp(Xl, Xu, Yl, Yu,r ,n1, n2,options)
 % ||X-[[A,B,C]]||_{F}^{2}+\lambda*tr(C'*L*C)+\alpha||C'_{u}C_{u}-I/2||_{F}^{2}
 %
-% X ... (mFea x nSmp)data matrix 
-%       mFea  ... number of dimensions 
+% X ... (mFea x nSmp)data matrix
+%       mFea  ... number of dimensions
 %       nSmp  ... number of samples
-% T ... (n1,n2,nSmp)tensor data 
+% T ... (n1,n2,nSmp)tensor data
 %       mfea=n1*n2
 % r...  number of cp rank
 % A ... (n1 x r) factor matrix
@@ -40,7 +40,7 @@ Tu3=(double(tenmat(Tu, 3)));
 
 
 param.k = 5;
-HG = gsp_nn_hypergraph(X', param); 
+HG = gsp_nn_hypergraph(X', param);
 % L = Dv - S
 L = HG.L;
 D = diag(HG.dv);
@@ -48,8 +48,8 @@ S = D - L;
 Su =S(nl+1:end,:);
 Du = D(nl+1:end,:);
 
-%% Initialization   
-Y = [Yl;Yu];     
+%% Initialization
+Y = [Yl;Yu];
 nCluster = length(unique(Y));
 YY = [];
 for i = reshape(unique(Y),1,nCluster)
@@ -77,21 +77,21 @@ while nIter < maxIter
         UPA = T1 * CkhaB;
         DownA = A * (CkhaB' * CkhaB);
         A = A .* (UPA ./ max(DownA,1e-10));
-        
+
        % ===================== update B ========================
        CkhaA = khatrirao(C,A);
        UPB = T2 * CkhaA;
        DownB = B * (CkhaA' * CkhaA);
        B = B .* (UPB ./ max(DownB,1e-10));
-       
+
        % ===================== update Cu ========================
        BkhaA = khatrirao(B,A);
        UPC = Tu3 * BkhaA + lambda *  Su * C+ beta* Cu;
        Cu3 = (Cu * Cu') * Cu;
        DownC =  Cu * (BkhaA' * BkhaA) + lambda * Du * C + 2 * beta * Cu3;
        Cu = Cu .* (UPC ./ max(DownC,1e-10));
-        
-        
+
+
        obj=CalcuObjhoCP(T1, A, B, C, L,lambda,beta);
        obj_all=[obj_all,obj];
        err=abs((obj_old-obj)/obj);
